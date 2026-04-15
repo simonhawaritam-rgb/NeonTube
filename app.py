@@ -4,7 +4,7 @@ from flask_cors import CORS
 import yt_dlp
 
 app = Flask(__name__)
-app.secret_key = 'neon-secret-stream'
+app.secret_key = os.environ.get('SECRET_KEY', 'neon-secret-stream')
 CORS(app)
 
 CONFIG_FILE = 'config.json'
@@ -15,10 +15,12 @@ DEFAULT_CONFIG = {
     "maintenance_message": ""
 }
 
+# Load config (on Vercel, use /tmp for writable files)
 if not os.path.exists(CONFIG_FILE):
     with open(CONFIG_FILE, 'w') as f:
         json.dump(DEFAULT_CONFIG, f)
 
+# Simple in‑memory cache (resets per invocation)
 stream_cache = {}
 CACHE_TTL = 3600
 
@@ -165,5 +167,6 @@ def clear_stream_cache():
     stream_cache.clear()
     return jsonify({'success': True, 'message': 'Stream cache cleared'})
 
+# Vercel requires the app to be named 'app'
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=8080, debug=False)
