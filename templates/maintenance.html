@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Maintenance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body{background:#0a0a0a;color:#fff;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+    .box{background:rgba(20,20,30,0.8);backdrop-filter:blur(12px);border:1px solid #00f3ff;border-radius:24px;padding:40px;text-align:center;max-width:500px;margin:20px}
+    h1{color:#00f3ff;text-shadow:0 0 20px #00f3ff;margin-bottom:20px}
+    p{color:#b0b0c0;margin-bottom:30px}
+    .admin-link{color:#00f3ff;text-decoration:none;font-size:0.9rem;cursor:pointer}
+    .admin-link:hover{text-decoration:underline}
+    #adminPassword{width:100%;padding:12px;margin:15px 0;background:rgba(0,0,0,0.4);border:1px solid #00f3ff;border-radius:12px;color:#fff;outline:none}
+    .hidden{display:none}
+    .btn{background:#00f3ff;border:none;padding:12px 24px;border-radius:30px;font-weight:600;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🛠️ Under Maintenance</h1>
+    <p>{{ message }}</p>
+    <div id="adminPrompt">
+      <span class="admin-link" onclick="showAdminLogin()">Admin?</span>
+    </div>
+    <div id="adminLoginForm" class="hidden">
+      <input type="password" id="adminPassword" placeholder="Admin password">
+      <button class="btn" onclick="loginAdmin()">Login</button>
+      <p id="loginError" style="color:#ff4d4d;margin-top:10px"></p>
+    </div>
+  </div>
+  <script>
+    function showAdminLogin(){
+      document.getElementById('adminPrompt').classList.add('hidden');
+      document.getElementById('adminLoginForm').classList.remove('hidden');
+    }
+    async function loginAdmin(){
+      const pwd = document.getElementById('adminPassword').value;
+      const res = await fetch('/admin/login', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({password:pwd})
+      });
+      if(res.ok){
+        window.location.href = '/';
+      } else {
+        document.getElementById('loginError').textContent = 'Invalid password';
+      }
+    }
+  </script>
+</body>
+</html>
